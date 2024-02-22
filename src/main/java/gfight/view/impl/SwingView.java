@@ -24,7 +24,6 @@ import gfight.view.api.EngineView;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
-import java.awt.Image;
 import java.awt.Toolkit;
 
 /**
@@ -33,6 +32,7 @@ import java.awt.Toolkit;
 public final class SwingView implements EngineView, InputEventProvider, CameraViewer {
 
     private static final double SCREEN_RATIO = 0.7;
+    private static final String PATH_STRING = "images/";
 
     private final Engine engine;
     private final JFrame frame;
@@ -57,7 +57,6 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
         value = "EI_EXPOSE_REP2", 
         justification = "It's necessary to store and external camera to print correctly on screen")
     public SwingView(final Engine engine, final ViewCamera camera, final InputEventFactory inputEventFactory) {
-        final String path = "src/main/resources/images/";
 
         this.engine = engine;
         this.camera = camera;
@@ -81,8 +80,8 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
         this.cardPanel.add(pausePanel, Pages.PAUSE_SCREEN.getName());
         this.cardPanel.add(this.gamePanel, Pages.GAME.getName());
 
-        final Image img = new ImageIcon(path + "Icon.png").getImage();
-        frame.setIconImage(img);
+        final ImageIcon img = new ImageIcon(getClass().getClassLoader().getResource(PATH_STRING + "Icon.png"));
+        frame.setIconImage(img.getImage());
         frame.pack();
         frame.setVisible(true);
     }
