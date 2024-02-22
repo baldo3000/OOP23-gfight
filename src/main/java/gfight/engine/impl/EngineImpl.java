@@ -16,12 +16,17 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import gfight.App;
 import gfight.common.impl.Position2DImpl;
 import gfight.engine.api.Engine;
 import gfight.engine.graphics.api.Camera;
+import gfight.engine.graphics.api.EngineColor;
+import gfight.engine.graphics.api.TextGraphicsComponent;
+import gfight.engine.graphics.api.GraphicsComponent.GraphicType;
 import gfight.engine.graphics.impl.CameraImpl;
+import gfight.engine.graphics.impl.GraphicsComponentsFactoryImpl;
 import gfight.engine.input.api.InputEvent;
 import gfight.engine.input.api.InputEventListener;
 import gfight.engine.input.api.InputEventValue;
@@ -39,7 +44,11 @@ public final class EngineImpl implements Engine, InputEventListener {
     private static final int MILLIS = 1000;
 
     private long frameLenght;
+    private boolean isFpsUnlocked;
+    private boolean isCountingFps;
 
+    private final TextGraphicsComponent fpsCounter = new GraphicsComponentsFactoryImpl().text(
+            EngineColor.RED, new Position2DImpl(-150, 50), 25, "", GraphicType.HUD);
     private final Queue<InputEvent> inputQueue = new LinkedList<>();
     private final Queue<InputEvent> bufferInputQueue = new LinkedList<>();
     private final Semaphore mutexSemaphore = new Semaphore(1);
@@ -74,6 +83,8 @@ public final class EngineImpl implements Engine, InputEventListener {
 
     private void gameLoop() {
         long prevFrameStartTime = System.currentTimeMillis();
+        int totalFrames = 0;
+        long totalTimes = 0;
 
         final int frameRate = this.view.getRefreshRate();
         this.frameLenght = MILLIS / frameRate;
@@ -88,7 +99,9 @@ public final class EngineImpl implements Engine, InputEventListener {
             processInput();
             update(deltaTime);
             render();
-            waitNextFrame(frameStartTime);
+            if (!this.isFpsUnlocked) {
+                waitNextFrame(frameStartTime);
+            }
             prevFrameStartTime = frameStartTime;
             if (this.world.isOver()) {
                 saveStats();
@@ -98,6 +111,15 @@ public final class EngineImpl implements Engine, InputEventListener {
                 holdPageUntilNotified(EngineView.Pages.PAUSE_SCREEN);
                 changeVisualizedPage(EngineView.Pages.GAME);
                 prevFrameStartTime = System.currentTimeMillis();
+            }
+            if (this.isCountingFps) {
+                totalFrames++;
+                totalTimes += deltaTime;
+                if (totalTimes >= 1000) {
+                    this.fpsCounter.setText(String.valueOf(totalFrames));
+                    totalFrames = 0;
+                    totalTimes = 0;
+                }
             }
         }
 
@@ -154,7 +176,7 @@ public final class EngineImpl implements Engine, InputEventListener {
     }
 
     private void render() {
-        view.render(world.getGraphicsComponents());
+        view.render(Stream.concat(world.getGraphicsComponents().stream(), Stream.of(this.fpsCounter)).toList());
     }
 
     private void update(final long deltaTime) {
@@ -225,4 +247,13 @@ public final class EngineImpl implements Engine, InputEventListener {
         return this.engineStatus;
     }
 
+    @Override
+    public void toggleFpsLock() {
+        this.isFpsUnlocked = !this.isFpsUnlocked;
+    }
+
+    @Override
+    public void toggleFpsCounter() {
+        this.isCountingFps = !this.isCountingFps;
+    }
 }

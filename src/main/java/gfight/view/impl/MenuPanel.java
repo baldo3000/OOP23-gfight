@@ -5,6 +5,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -22,6 +23,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -133,6 +136,24 @@ public class MenuPanel extends JPanel {
         menuBar.add(mapMenu);
         menuBar.setAlignmentX(CENTER_ALIGNMENT);
 
+        // FPS UNLOCKER
+        final JCheckBox fpsUnlocker = new JCheckBox("Unlock FPS");
+        fpsUnlocker.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                engine.toggleFpsLock();
+            }
+        });
+
+        // FPS COUNTER
+        final JCheckBox fpsCounter = new JCheckBox("Count FPS");
+        fpsCounter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                engine.toggleFpsCounter();
+            }
+        });
+
         leftPanel.add(Box.createVerticalGlue());
         leftPanel.add(firstLabel);
         leftPanel.add(secondLabel);
@@ -141,6 +162,8 @@ public class MenuPanel extends JPanel {
         leftPanel.add(statsButton);
         leftPanel.add(menuBar);
         leftPanel.add(Box.createVerticalGlue());
+        leftPanel.add(fpsUnlocker);
+        leftPanel.add(fpsCounter);
 
         add(leftPanel, BorderLayout.WEST);
     }

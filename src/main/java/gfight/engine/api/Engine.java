@@ -48,19 +48,33 @@ public interface Engine {
 
     /**
      * Changes the status of the Engine.
+     * 
      * @param status status to put
      */
     void changeStatus(EngineStatus status);
 
     /**
      * Gives the current EngineStatus of the engine.
+     * 
      * @return the current status
      */
     EngineStatus getEngineStatus();
 
     /**
      * Selects the level to load during EngineStatus.GAME.
+     * 
      * @param level level name
      */
     void selectLevel(String level);
+
+    /**
+     * Toggle the fps unlock. If disabled fps
+     * will be locked to your screen refresh rate.
+     */
+    void toggleFpsLock();
+
+    /**
+     * Toggle the fps counter.
+     */
+    void toggleFpsCounter();
 }
