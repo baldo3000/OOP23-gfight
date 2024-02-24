@@ -2,6 +2,7 @@ package gfight.world.impl;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,6 @@ import gfight.world.api.World;
 import gfight.world.entity.api.ActiveEntity;
 import gfight.world.entity.api.CachedGameEntity;
 import gfight.world.entity.api.Character;
-import gfight.world.entity.api.GameEntity;
 import gfight.world.entity.api.MovingEntity;
 import gfight.world.entity.impl.EntityFactoryImpl;
 import gfight.world.map.api.GameMap;
@@ -94,9 +94,11 @@ public class WorldImpl implements World {
         }
         this.freeHitboxes();
         this.camera.keepInArea(this.player.getPosition());
-        this.entityManager.getEntities().stream()
-                .filter(e -> e instanceof MovingEntity)
-                .forEach(e -> ((MovingEntity) e).updatePos(deltaTime, this.entityManager.getEntities()));
+        for (final var entity : this.entityManager.getEntities()) {
+            if (entity instanceof MovingEntity) {
+                ((MovingEntity) entity).updatePos(deltaTime, this.entityManager.getEntities());
+            }
+        }
         this.entityManager.clean();
         if (this.entityManager.isClear()) {
             newLevel();
@@ -105,10 +107,13 @@ public class WorldImpl implements World {
 
     @Override
     public final List<GraphicsComponent> getGraphicsComponents() {
-        return this.entityManager.getEntities().stream()
-                .map(GameEntity::getGraphics)
-                .flatMap(Set::stream)
-                .toList();
+        final List<GraphicsComponent> gComponents = new ArrayList<>();
+        for (final var entity : this.entityManager.getEntities()) {
+            for (final var gComp : entity.getGraphics()) {
+                gComponents.add(gComp);
+            }
+        }
+        return gComponents;
     }
 
     @Override

@@ -3,7 +3,6 @@ package gfight.world.impl;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import gfight.common.api.Position2D;
 import gfight.common.api.Vect;
@@ -101,7 +100,9 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     public final Set<CachedGameEntity> getEntities() {
-        return Stream.concat(this.enemies.stream(), this.otherEntities.stream()).collect(Collectors.toSet());
+        final Set<CachedGameEntity> entities = new HashSet<>(this.otherEntities);
+        entities.addAll(this.enemies);
+        return entities;
     }
 
     @Override

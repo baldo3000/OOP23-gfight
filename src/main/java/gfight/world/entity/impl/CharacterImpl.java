@@ -25,6 +25,7 @@ public final class CharacterImpl extends AbstractActiveEntity implements Charact
     private Optional<Weapon> weapon = Optional.empty();
     private Vect pointingDirection = new VectorImpl(getPosition(), getPosition2Ds().get(0));
     private final CharacterType role;
+    private final Hitboxes rotation = new HitboxesImpl();
 
     /**
      * Constructor of abstract character.
@@ -43,8 +44,7 @@ public final class CharacterImpl extends AbstractActiveEntity implements Charact
 
     @Override
     public void pointTo(final Position2D target) {
-        final Hitboxes rotation = new HitboxesImpl();
-        setCoordinates(rotation.rotateTo(getPosition2Ds(), this.pointingDirection, getPosition(), target));
+        setCoordinates(this.rotation.rotateTo(getPosition2Ds(), this.pointingDirection, getPosition(), target));
         setPointingDirection(new VectorImpl(getPosition(), getPosition2Ds().get(2)));
     }
 

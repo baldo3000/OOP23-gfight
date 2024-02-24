@@ -1,9 +1,7 @@
 package gfight.world.hitbox.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.prep.PreparedPolygon;
 import org.locationtech.jts.geom.util.AffineTransformation;
@@ -33,9 +31,11 @@ public final class HitboxesImpl implements Hitboxes {
         final Hitbox hitbox = new HitboxImpl(polygon);
         final AffineTransformation rotation = AffineTransformation.rotationInstance(theta, center.getX(), center.getY());
         final Coordinate[] rotatedCoordinates = rotation.transform(hitbox.getPolygonalHitbox()).getCoordinates();
-        return Arrays.stream(rotatedCoordinates)
-                .map(coordinate -> new Position2DImpl(coordinate.getX(), coordinate.getY()))
-                .collect(Collectors.toList());
+        final List<Position2D> rotated = new ArrayList<>(rotatedCoordinates.length);
+        for (final var coordinate : rotatedCoordinates) {
+            rotated.add(new Position2DImpl(coordinate.getX(), coordinate.getY()));
+        }
+        return rotated;
     }
 
     @Override

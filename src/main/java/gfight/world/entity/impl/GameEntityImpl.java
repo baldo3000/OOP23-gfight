@@ -2,7 +2,6 @@ package gfight.world.entity.impl;
 
 import java.util.List;
 import java.util.Set;
-import java.util.LinkedHashSet;
 import gfight.common.api.Position2D;
 import gfight.common.api.Vect;
 import gfight.common.impl.Position2DImpl;
@@ -15,6 +14,7 @@ import gfight.world.hitbox.impl.HitboxImpl;
 import gfight.world.hitbox.impl.HitboxesImpl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -24,7 +24,7 @@ public final class GameEntityImpl implements GameEntity {
     private List<Position2D> vertexes = new ArrayList<>();
     private Position2D position;
     private Set<GraphicsComponent> graphicsComponents;
-    private final Set<GameEntity> ignoredEntities = new LinkedHashSet<>();
+    private final Set<GameEntity> ignoredEntities = new HashSet<>();
 
     /**
      * Game Entity constructor that creates gameEntity with vertexes position and
@@ -62,11 +62,14 @@ public final class GameEntityImpl implements GameEntity {
     public Set<GameEntity> getAllCollided(final Set<? extends GameEntity> gameObjects) {
         final Hitboxes hitbox = new HitboxesImpl();
         final Hitbox boundingBox = this.getHitBox();
-        final Set<GameEntity> collidedObjects = new LinkedHashSet<>();
-        gameObjects.stream()
-                .filter(a -> !a.getPosition().equals(this.getPosition()) && !ignoredEntities.contains(a)
-                        && hitbox.isColliding(boundingBox, a.getHitBox()))
-                .forEach(collidedObjects::add);
+        final Set<GameEntity> collidedObjects = new HashSet<>();
+        for (final var object : gameObjects) {
+            if (!object.getPosition().equals(this.getPosition())
+                    && !ignoredEntities.contains(object)
+                    && hitbox.isColliding(boundingBox, object.getHitBox())) {
+                collidedObjects.add(object);
+            }
+        }
         return collidedObjects;
     }
 
@@ -78,12 +81,12 @@ public final class GameEntityImpl implements GameEntity {
 
     @Override
     public Set<GraphicsComponent> getGraphics() {
-        return new LinkedHashSet<>(this.graphicsComponents);
+        return Collections.unmodifiableSet(this.graphicsComponents);
     }
 
     @Override
     public List<Position2D> getPosition2Ds() {
-        return List.copyOf(vertexes);
+        return Collections.unmodifiableList(this.vertexes);
     }
 
     @Override
