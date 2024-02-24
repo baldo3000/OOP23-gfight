@@ -9,6 +9,7 @@ import gfight.engine.graphics.api.ViewCamera;
 import gfight.engine.input.api.InputEventFactory;
 import gfight.engine.input.api.InputEventListener;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -50,10 +51,11 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
         this.addMouseListener(this);
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
+        setBackground(Color.WHITE);
     }
 
     @Override
-    public void paint(final Graphics g) {
+    public void paintComponent(final Graphics g) {
         if (!(g instanceof Graphics2D)) {
             throw new IllegalArgumentException("Needs Graphics2D to render correctly");
         }
@@ -61,8 +63,7 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2.clearRect(0, 0, this.getWidth(), this.getHeight());
-
+        super.paintComponent(g2);
         final List<GraphicsComponent> gCompList = scene.getGraphicsComponents();
         gCompList.stream()
             .filter(comp -> comp instanceof RenderableGraphicComponent)

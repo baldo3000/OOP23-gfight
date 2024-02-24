@@ -22,15 +22,13 @@ public final class PolygonGraphicsRenderer extends AbstractGraphicsComponentRend
     void renderComp(final Graphics2D g, final ViewCamera camera) {
         final var gComp = getGraphicsComponent();
         final List<Position2D> pointList = camera.getScreenPositions(gComp.getPositions(), gComp.getType());
-
-        g.fillPolygon(
-            pointList.stream()
-                    .mapToInt(p -> (int) Math.round(p.getX()))
-                    .toArray(),
-            pointList.stream()
-                    .mapToInt(p -> (int) Math.round(p.getY()))
-                    .toArray(),
-            pointList.size());
+        final int[] xPoints = new int[pointList.size()];
+        final int[] yPoints = new int[pointList.size()];
+        for (int i = 0; i < pointList.size(); i++) {
+            xPoints[i] = (int) pointList.get(i).getX();
+            yPoints[i] = (int) pointList.get(i).getY();
+        }
+        g.fillPolygon(xPoints, yPoints, pointList.size());
     }
 
 }

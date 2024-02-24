@@ -1,5 +1,6 @@
 package gfight.engine.graphics.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gfight.common.api.Position2D;
@@ -64,7 +65,11 @@ public final class CameraImpl implements Camera {
 
     @Override
     public List<Position2D> getScreenPositions(final List<Position2D> pos, final GraphicType type) {
-        return pos.stream().map(p -> getScreenPosition(p, type)).toList();
+        final List<Position2D> positions = new ArrayList<>();
+        for (final var position : pos) {
+            positions.add(getScreenPosition(position, type));
+        }
+        return positions;
     }
 
     @Override
