@@ -70,6 +70,7 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
             .filter(comp -> comp instanceof RenderableGraphicComponent)
             .map(comp -> (RenderableGraphicComponent) comp)
             .forEach(comp -> comp.getRenderer().render(g2, this.camera));
+        g.dispose();
         //generateBlackBars(g2, (int) camera.getHoriOffset(), (int) camera.getVertOffset());
     }
 

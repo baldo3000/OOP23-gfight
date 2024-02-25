@@ -8,6 +8,7 @@ import java.awt.event.WindowFocusListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gfight.engine.api.Engine;
@@ -139,7 +140,9 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
     public void render(final List<GraphicsComponent> gComponentsList) {
         this.camera.setScreenDimension(this.frame.getSize().getWidth(), this.frame.getSize().getHeight());
         this.gComponentsList = Collections.unmodifiableList(gComponentsList);
-        this.frame.repaint();
+        SwingUtilities.invokeLater(() -> {
+            gamePanel.repaint();
+        });
     }
 
     @Override
