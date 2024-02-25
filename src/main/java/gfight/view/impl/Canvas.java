@@ -44,7 +44,8 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
     Canvas(final int width, final int height, final SwingView scene, final ViewCamera camera) {
         this.scene = scene;
         this.camera = camera;
-
+        setIgnoreRepaint(true);
+        setDoubleBuffered(true);
         setSize(width, height);
         this.addKeyListener(this);
         this.addMouseMotionListener(this);
