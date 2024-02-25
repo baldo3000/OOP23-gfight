@@ -59,7 +59,7 @@ public class SpawnerFactoryImpl implements SpawnerFactory {
                         + (initialHealth * (getDifficulty() - 1) * statsMultiplier);
                 final double damage = ENEMY_PROJ_DAMAGE
                         + (ENEMY_PROJ_DAMAGE * (getDifficulty() - 1) * statsMultiplier);
-                final Character enemy = random.nextBoolean()
+                final Character enemy = random.nextBoolean() && initialHealth != INITIAL_BOSS_HEALTH
                         ? entityFactory.createRunner(target, dim, position, (int) health, map)
                         : entityFactory.createShooter(target, dim, position, (int) health, map);
                 enemy.setWeapon(new WeaponFactoryImpl().simpleGun(

@@ -68,7 +68,7 @@ public final class GameTileImpl implements GameTile {
         final GameTile tile = (GameTile) obj;
         return this.centerPosition.equals(tile.getPosition())
                 && Double.compare(this.dimension, tile.getDimension()) == 0
-                && this.type.equals(tile.getType());
+                && this.type == tile.getType();
     }
 
     @Override

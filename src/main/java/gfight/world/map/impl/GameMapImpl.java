@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.AsUnmodifiableGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -38,7 +38,7 @@ public final class GameMapImpl implements GameMap {
     private final Map<Position2D, Spawner.SpawnerType> spawnersPositions;
     private final List<List<GameTile>> tiles;
     private Position2D playerSpawn;
-    private Optional<Graph<GameTile, DefaultEdge>> tileGraph;
+    private Graph<GameTile, DefaultEdge> tileGraph;
 
     /**
      * Utility method to convert tile grid coordinates to real game position.
@@ -59,8 +59,8 @@ public final class GameMapImpl implements GameMap {
     public GameMapImpl(final String mapName) {
         this.spawnersPositions = new HashMap<>();
         this.tiles = new ArrayList<>();
-        this.tileGraph = Optional.empty();
         loadFromFile(mapName);
+        buildGraph();
     }
 
     @Override
@@ -106,10 +106,7 @@ public final class GameMapImpl implements GameMap {
 
     @Override
     public Graph<GameTile, DefaultEdge> getTileGraph() {
-        if (!this.tileGraph.isPresent()) {
-            buildGraph();
-        }
-        return this.tileGraph.get();
+        return new AsUnmodifiableGraph<>(this.tileGraph);
     }
 
     private void buildGraph() {
@@ -129,8 +126,7 @@ public final class GameMapImpl implements GameMap {
                 }
             }
         }
-
-        this.tileGraph = Optional.of(g);
+        this.tileGraph = g;
     }
 
     private void addEdge(final Graph<GameTile, DefaultEdge> g, final GameTile tile, final int x, final int y) {

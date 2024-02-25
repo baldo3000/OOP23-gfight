@@ -1,7 +1,6 @@
 package gfight.world.movement.impl;
 
 import gfight.common.api.Position2D;
-import gfight.common.api.Vect;
 import gfight.common.impl.VectorImpl;
 import gfight.world.entity.api.Character;
 import gfight.world.entity.api.GameEntity;
@@ -31,7 +30,12 @@ public final class BfsMovement extends BaseMovement {
     private final GameMap map;
     private final double speed;
     private static final int RANGE_RUNNER = GameMap.TILE_DIM;
-    private static final int TILES_SHOOTER = 5;
+    private static final int TILES_SHOOTER = 4;
+
+    private GameTile cachedTargetTile;
+    private List<Position2D> cachedGraphPath;
+    private boolean useCachedPath;
+    private int pathPosition;
 
     /**
      * Constructor of bfs movement.
@@ -46,12 +50,15 @@ public final class BfsMovement extends BaseMovement {
         this.agent = agent;
         this.map = map;
         this.speed = speed;
+
+        this.cachedGraphPath = getPathFromBfs();
+        this.cachedTargetTile = this.map.searchTile(this.target.getPosition());
     }
 
     @Override
     public void update() {
         this.agent.pointTo(this.target.getPosition());
-        final List<Position2D> path = getPathFromBfs();
+        final List<Position2D> path = getPathFromBfsCached();
         if (!path.isEmpty()) {
             if (agent.getType() == CharacterType.SHOOTER) {
                 handleShooterBehavior(path);
@@ -64,7 +71,7 @@ public final class BfsMovement extends BaseMovement {
     }
 
     private void handleShooterBehavior(final List<Position2D> path) {
-        if (path.size() < TILES_SHOOTER) {
+        if (path.size() - this.pathPosition < TILES_SHOOTER) {
             stopAndAttack();
         } else {
             move(path);
@@ -85,8 +92,26 @@ public final class BfsMovement extends BaseMovement {
     }
 
     private void move(final List<Position2D> path) {
-        final Vect newDirection = new VectorImpl(agent.getPosition(), path.get(1)).norm().scale(speed);
-        agent.setDirection(newDirection);
+        if (this.map.searchTile(this.agent.getPosition()).equals(this.map.searchTile(path.get(this.pathPosition)))
+                && this.pathPosition < path.size() - 1) {
+            this.pathPosition++;
+        }
+        if (this.pathPosition == path.size() - 1) {
+            agent.setDirection(new VectorImpl(agent.getPosition(), this.target.getPosition()).norm().scale(speed));
+        } else {
+            agent.setDirection(new VectorImpl(agent.getPosition(), path.get(this.pathPosition)).norm().scale(speed));
+        }
+    }
+
+    private List<Position2D> getPathFromBfsCached() {
+        final var targetTile = this.map.searchTile(this.target.getPosition());
+        if (!this.useCachedPath && !this.cachedTargetTile.equals(targetTile)) {
+            this.cachedTargetTile = targetTile;
+            this.cachedGraphPath = getPathFromBfs();
+            this.pathPosition = 0;
+        }
+        this.useCachedPath = !this.useCachedPath;
+        return this.cachedGraphPath;
     }
 
     private List<Position2D> getPathFromBfs() {

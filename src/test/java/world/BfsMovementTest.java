@@ -78,7 +78,7 @@ class BfsMovementTest {
         }
         // The final position should be 3.5 tiles - 1 pixel (The width of a tile is 40)
         // far from the target
-        assertEquals(agent.getPosition(), new Position2DImpl(481, 100));
+        assertEquals(agent.getPosition(), new Position2DImpl(482, 100));
     }
 
     /**

@@ -35,7 +35,7 @@ public class EntityFactoryImpl implements EntityFactory {
         private final VertexCalculator vertexCalculator = new VertexCalculatorImpl();
         private final GraphicsComponentsFactory graphicsComponentsFactory = new GraphicsComponentsFactoryImpl();
         private static final double SPEED_SHOOTERS = 0.75;
-        private static final double SPEED_RUNNERS = 2;
+        private static final double SPEED_RUNNERS = 1.75;
 
         @Override
         public final Character createPlayer(final double sideLength, final Position2D position,

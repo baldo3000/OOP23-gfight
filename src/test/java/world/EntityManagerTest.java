@@ -12,6 +12,8 @@ import gfight.common.impl.Position2DImpl;
 import gfight.world.api.EntityManager;
 import gfight.world.entity.impl.EntityFactoryImpl;
 import gfight.world.impl.EntityManagerImpl;
+import gfight.world.map.api.GameMap;
+import gfight.world.map.impl.GameMapImpl;
 import gfight.world.movement.impl.InputMovementImpl;
 
 /**
@@ -22,6 +24,7 @@ class EntityManagerTest {
     private static final Position2D TEST_POS = new Position2DImpl(10, 10);
     private static final int TEST_STAT = 10;
 
+    private final GameMap map = new GameMapImpl("map1");
     private EntityManager manager;
 
     /**
@@ -45,7 +48,7 @@ class EntityManagerTest {
         assertTrue(this.manager.getEntities().contains(testChest));
         final var testObstacle = this.manager.createObstacle(TEST_STAT, TEST_POS);
         assertTrue(this.manager.getEntities().contains(testObstacle));
-        final var testEnemy = this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, null);
+        final var testEnemy = this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, this.map);
         assertTrue(this.manager.getEntities().contains(testEnemy));
     }
 
@@ -58,7 +61,7 @@ class EntityManagerTest {
         final var testPlayer = this.manager.createPlayer(TEST_STAT, TEST_POS, TEST_STAT,
                 new InputMovementImpl());
         assertTrue(this.manager.isClear());
-        this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, null);
+        this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, this.map);
         assertFalse(this.manager.isClear());
     }
 
@@ -68,7 +71,7 @@ class EntityManagerTest {
     @Test
     void testClean() {
         final var testPlayer = this.manager.createPlayer(TEST_STAT, TEST_POS, 0, new InputMovementImpl());
-        this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, null);
+        this.manager.createRunner(testPlayer, TEST_STAT, TEST_POS, TEST_STAT, this.map);
         this.manager.createChest(TEST_STAT, TEST_POS, 0);
         assertEquals(3, this.manager.getEntities().size());
         this.manager.clean();
