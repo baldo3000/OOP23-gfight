@@ -25,6 +25,7 @@ public final class GameEntityImpl implements GameEntity {
     private Position2D position;
     private Set<GraphicsComponent> graphicsComponents;
     private final Set<GameEntity> ignoredEntities = new HashSet<>();
+    private final Hitboxes hitboxes = new HitboxesImpl();
 
     /**
      * Game Entity constructor that creates gameEntity with vertexes position and
@@ -55,18 +56,17 @@ public final class GameEntityImpl implements GameEntity {
 
     @Override
     public Position2D getPosition() {
-        return new Position2DImpl(position);
+        return this.position;
     }
 
     @Override
     public Set<GameEntity> getAllCollided(final Set<? extends GameEntity> gameObjects) {
-        final Hitboxes hitbox = new HitboxesImpl();
         final Hitbox boundingBox = this.getHitBox();
         final Set<GameEntity> collidedObjects = new HashSet<>();
         for (final var object : gameObjects) {
             if (!object.getPosition().equals(this.getPosition())
                     && !ignoredEntities.contains(object)
-                    && hitbox.isColliding(boundingBox, object.getHitBox())) {
+                    && this.hitboxes.isColliding(boundingBox, object.getHitBox())) {
                 collidedObjects.add(object);
             }
         }

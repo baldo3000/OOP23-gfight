@@ -80,15 +80,16 @@ public final class CharacterImpl extends AbstractActiveEntity implements Charact
 
     @Override
     protected void applyCollisions(final Set<? extends GameEntity> gameobjects) {
+        final var allCollided = getAllCollided(gameobjects);
         if (this.getType() == CharacterType.PLAYER) {
-            getAllCollided(gameobjects).stream()
+            allCollided.stream()
                     .filter(entity -> !(entity instanceof Projectile) && !(entity instanceof Obstacle))
                     .forEach(entity -> new PushAwayCommand<>(this, entity).execute());
-            getAllCollided(gameobjects).stream()
+            allCollided.stream()
                     .filter(entity -> entity instanceof Obstacle)
                     .forEach(entity -> new SlideCommand<>(this, entity).execute());
         } else {
-            getAllCollided(gameobjects).stream()
+            allCollided.stream()
                     .filter(entity -> !(entity instanceof Projectile))
                     .forEach(entity -> new PushAwayCommand<>(this, entity).execute());
         }

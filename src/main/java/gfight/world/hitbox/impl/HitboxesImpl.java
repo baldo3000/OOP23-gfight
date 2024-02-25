@@ -2,9 +2,7 @@ package gfight.world.hitbox.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.prep.PreparedPolygon;
-import org.locationtech.jts.geom.util.AffineTransformation;
 import gfight.common.api.Position2D;
 import gfight.common.api.Vect;
 import gfight.common.impl.Position2DImpl;
@@ -28,12 +26,13 @@ public final class HitboxesImpl implements Hitboxes {
         if (polygon.isEmpty()) {
             return new ArrayList<>();
         }
-        final Hitbox hitbox = new HitboxImpl(polygon);
-        final AffineTransformation rotation = AffineTransformation.rotationInstance(theta, center.getX(), center.getY());
-        final Coordinate[] rotatedCoordinates = rotation.transform(hitbox.getPolygonalHitbox()).getCoordinates();
-        final List<Position2D> rotated = new ArrayList<>(rotatedCoordinates.length);
-        for (final var coordinate : rotatedCoordinates) {
-            rotated.add(new Position2DImpl(coordinate.getX(), coordinate.getY()));
+        final List<Position2D> rotated = new ArrayList<>(polygon.size());
+        for (final var coordinate : polygon) {
+            final var newX = center.getX() + Math.cos(theta) * (coordinate.getX() - center.getX())
+                    - Math.sin(theta) * (coordinate.getY() - center.getY());
+            final var newY = center.getY() + Math.sin(theta) * (coordinate.getX() - center.getX())
+                    + Math.cos(theta) * (coordinate.getY() - center.getY());
+            rotated.add(new Position2DImpl(newX, newY));
         }
         return rotated;
     }
