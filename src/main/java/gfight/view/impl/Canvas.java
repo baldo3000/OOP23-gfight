@@ -18,7 +18,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
@@ -26,7 +26,8 @@ import java.util.Optional;
 
 /**
  * Canvas class for JSwing,
- * extends a JPanel to create a panel in which we can freely paint using a GraphicsRenderer to draw GraphicsComponents.
+ * extends a JPanel to create a panel in which we can freely paint using a
+ * GraphicsRenderer to draw GraphicsComponents.
  */
 public final class Canvas extends JPanel implements KeyListener, MouseMotionListener, MouseListener {
     private static final long serialVersionUID = -4058048042685678594L;
@@ -57,31 +58,41 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
 
     @Override
     public void paintComponent(final Graphics g) {
+        super.paintComponent(g);
         if (!(g instanceof Graphics2D)) {
             throw new IllegalArgumentException("Needs Graphics2D to render correctly");
         }
-        final Graphics2D g2 = (Graphics2D) g;
 
+        final BufferedImage buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        super.paintComponent(g2);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
+
         final List<GraphicsComponent> gCompList = scene.getGraphicsComponents();
         gCompList.stream()
-            .filter(comp -> comp instanceof RenderableGraphicComponent)
-            .map(comp -> (RenderableGraphicComponent) comp)
-            .forEach(comp -> comp.getRenderer().render(g2, this.camera));
+                .filter(comp -> comp instanceof RenderableGraphicComponent)
+                .map(comp -> (RenderableGraphicComponent) comp)
+                .forEach(comp -> comp.getRenderer().render(g2, this.camera));
+
+        g.drawImage(buffer, 0, 0, null);
         g.dispose();
-        //generateBlackBars(g2, (int) camera.getHoriOffset(), (int) camera.getVertOffset());
+        // generateBlackBars(g2, (int) camera.getHoriOffset(), (int)
+        // camera.getVertOffset());
     }
 
     /*
-    private void generateBlackBars(final Graphics2D g2, final int horiOffset, final int vertOffset) {
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, this.getWidth(), vertOffset);
-        g2.fillRect(0, this.getHeight() - vertOffset, this.getWidth(), vertOffset);
-        g2.fillRect(0, 0, horiOffset, this.getHeight());
-        g2.fillRect(this.getWidth() - horiOffset, 0, horiOffset, this.getHeight());
-    }*/
+     * private void generateBlackBars(final Graphics2D g2, final int horiOffset,
+     * final int vertOffset) {
+     * g2.setColor(Color.BLACK);
+     * g2.fillRect(0, 0, this.getWidth(), vertOffset);
+     * g2.fillRect(0, this.getHeight() - vertOffset, this.getWidth(), vertOffset);
+     * g2.fillRect(0, 0, horiOffset, this.getHeight());
+     * g2.fillRect(this.getWidth() - horiOffset, 0, horiOffset, this.getHeight());
+     * }
+     */
 
     void setInputEventListener(final InputEventListener inputListener) {
         this.inputListener = Optional.ofNullable(inputListener);
@@ -103,10 +114,8 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
     public void mouseDragged(final MouseEvent e) {
         if (isInputAvailable()) {
             this.inputListener.get().notifyInputEvent(
-                this.inputFactory.get().mouseDownAtPosition(
-                    new Position2DImpl(e.getX(), e.getY())
-                )
-            );
+                    this.inputFactory.get().mouseDownAtPosition(
+                            new Position2DImpl(e.getX(), e.getY())));
         }
     }
 
@@ -114,10 +123,8 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
     public void mouseMoved(final MouseEvent e) {
         if (isInputAvailable()) {
             this.inputListener.get().notifyInputEvent(
-                this.inputFactory.get().mouseUpAtPosition(
-                    new Position2DImpl(e.getX(), e.getY())
-                )
-            );
+                    this.inputFactory.get().mouseUpAtPosition(
+                            new Position2DImpl(e.getX(), e.getY())));
         }
     }
 
@@ -134,8 +141,7 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
                 final var value = this.inputFactory.get().filterKeyValue(key);
                 if (value.isPresent()) {
                     this.inputListener.get().notifyInputEvent(
-                        this.inputFactory.get().pressedValue(value.get())
-                    );
+                            this.inputFactory.get().pressedValue(value.get()));
                 }
             }
         }
@@ -149,8 +155,7 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
             final var value = this.inputFactory.get().filterKeyValue(key);
             if (value.isPresent()) {
                 this.inputListener.get().notifyInputEvent(
-                    this.inputFactory.get().releasedValue(value.get())
-                );
+                        this.inputFactory.get().releasedValue(value.get()));
             }
         }
     }
@@ -163,10 +168,8 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
     public void mousePressed(final MouseEvent e) {
         if (isInputAvailable()) {
             this.inputListener.get().notifyInputEvent(
-                this.inputFactory.get().mouseDownAtPosition(
-                    new Position2DImpl(e.getX(), e.getY())
-                )
-            );
+                    this.inputFactory.get().mouseDownAtPosition(
+                            new Position2DImpl(e.getX(), e.getY())));
         }
     }
 
@@ -174,10 +177,8 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
     public void mouseReleased(final MouseEvent e) {
         if (isInputAvailable()) {
             this.inputListener.get().notifyInputEvent(
-                this.inputFactory.get().mouseUpAtPosition(
-                    new Position2DImpl(e.getX(), e.getY())
-                )
-            );
+                    this.inputFactory.get().mouseUpAtPosition(
+                            new Position2DImpl(e.getX(), e.getY())));
         }
     }
 
