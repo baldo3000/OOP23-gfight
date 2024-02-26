@@ -39,6 +39,7 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
 
     private final JPanel cardPanel;
     private final Canvas gamePanel;
+    private final JPanel pausePanel;
     private final CardLayout cardLayout;
 
     private List<GraphicsComponent> gComponentsList = Collections.emptyList();
@@ -73,7 +74,7 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
         this.frame.getContentPane().add(this.cardPanel);
         final JPanel menuPanel = new MenuPanel(this.engine);
         final JPanel deathPanel = new GameOver(this.engine);
-        final JPanel pausePanel = new PausePanel(this.engine);
+        this.pausePanel = new PausePanel(this.engine);
         this.gamePanel = setupGamePanel(camera);
         this.cardPanel.add(menuPanel, Pages.MENU.getName());
         this.cardPanel.add(deathPanel, Pages.DEATH_SCREEN.getName());
@@ -147,6 +148,8 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
         if (panel == Pages.GAME) {
             this.gamePanel.resetPressedKeys();
             this.gamePanel.requestFocusInWindow();
+        } else if (panel == Pages.PAUSE_SCREEN) {
+            this.pausePanel.requestFocusInWindow();
         }
     }
 

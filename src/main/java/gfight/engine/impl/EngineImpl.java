@@ -196,6 +196,8 @@ public final class EngineImpl implements Engine, InputEventListener {
             if (event instanceof InputEventValue
                     && ((InputEventValue) event).getValue() == InputEventValue.Value.PAUSE) {
                 this.engineStatus = EngineStatus.PAUSE;
+                final var reset = new InputEventFactoryImpl().pressedValue(InputEventValue.Value.RESET);
+                world.processInput(reset);
             } else {
                 world.processInput(event);
             }

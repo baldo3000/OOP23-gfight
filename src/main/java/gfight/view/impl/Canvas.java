@@ -8,6 +8,7 @@ import gfight.engine.graphics.api.RenderableGraphicComponent;
 import gfight.engine.graphics.api.ViewCamera;
 import gfight.engine.input.api.InputEventFactory;
 import gfight.engine.input.api.InputEventListener;
+import gfight.engine.input.api.InputEventValue;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -139,7 +140,7 @@ public final class Canvas extends JPanel implements KeyListener, MouseMotionList
             if (!pressedKeys.contains(key)) {
                 pressedKeys.add(key);
                 final var value = this.inputFactory.get().filterKeyValue(key);
-                if (value.isPresent()) {
+                if (value.isPresent() && value.get().getKey() != InputEventValue.Value.PAUSE.getKey()) {
                     this.inputListener.get().notifyInputEvent(
                             this.inputFactory.get().pressedValue(value.get()));
                 }

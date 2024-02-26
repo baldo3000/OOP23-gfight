@@ -2,11 +2,17 @@ package gfight.view.impl;
 
 import gfight.engine.api.Engine;
 import gfight.engine.api.Engine.EngineStatus;
+import gfight.engine.input.api.InputEventListener;
+import gfight.engine.input.api.InputEventValue;
+import gfight.engine.input.impl.InputEventFactoryImpl;
 
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.BoxLayout;
@@ -36,6 +42,7 @@ public final class PausePanel extends JPanel {
      * @param engine the game engine.
      */
     public PausePanel(final Engine engine) {
+        setFocusable(true);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.backgroundImage = new ImageIcon(getClass().getClassLoader().getResource(PATH_STRING + "/Pause.png"));
         final JLabel titleLabel = new JLabel("Paused");
@@ -55,6 +62,19 @@ public final class PausePanel extends JPanel {
         goToMenuButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         goToMenuButton.setBorder(new RoundedBorder(RADIUS));
         goToMenuButton.addActionListener(e -> engine.changeStatus(EngineStatus.MENU));
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(final KeyEvent e) {
+                if (e.getKeyCode() == InputEventValue.Value.PAUSE.getKey()) {
+                    engine.changeStatus(EngineStatus.GAME);
+                    if (engine instanceof InputEventListener listener) {
+                        listener.notifyInputEvent(
+                                new InputEventFactoryImpl().pressedValue(InputEventValue.Value.RESET));
+                    }
+                }
+            }
+        });
 
         this.add(Box.createVerticalGlue());
         this.add(titleLabel);
