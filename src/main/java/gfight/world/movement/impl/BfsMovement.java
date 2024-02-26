@@ -105,12 +105,14 @@ public final class BfsMovement extends BaseMovement {
 
     private List<Position2D> getPathFromBfsCached() {
         final var targetTile = this.map.searchTile(this.target.getPosition());
-        if (!this.useCachedPath && !this.cachedTargetTile.equals(targetTile)) {
-            this.cachedTargetTile = targetTile;
-            this.cachedGraphPath = getPathFromBfs();
-            this.pathPosition = 0;
+        if (!this.cachedTargetTile.equals(targetTile)) {
+            if (!this.useCachedPath) {
+                this.cachedTargetTile = targetTile;
+                this.cachedGraphPath = getPathFromBfs();
+                this.pathPosition = 0;
+            }
+            this.useCachedPath = !this.useCachedPath;
         }
-        this.useCachedPath = !this.useCachedPath;
         return this.cachedGraphPath;
     }
 
