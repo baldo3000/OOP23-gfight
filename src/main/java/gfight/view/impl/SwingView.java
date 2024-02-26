@@ -82,9 +82,8 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
         this.cardPanel.add(this.gamePanel, Pages.GAME.getName());
 
         final ImageIcon img = new ImageIcon(getClass().getClassLoader().getResource(PATH_STRING + "Icon.png"));
-        frame.setIconImage(img.getImage());
-        frame.pack();
-        frame.setVisible(true);
+        this.frame.setIconImage(img.getImage());
+        this.frame.setVisible(true);
     }
 
     private void setupFrame() {
@@ -122,6 +121,7 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
             }
         });
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.pack();
     }
 
     private Canvas setupGamePanel(final ViewCamera camera) {
