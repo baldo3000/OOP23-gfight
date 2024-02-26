@@ -12,7 +12,6 @@ import javax.swing.SwingUtilities;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import gfight.engine.api.Engine;
-import gfight.engine.api.Engine.EngineStatus;
 import gfight.engine.graphics.api.GraphicsComponent;
 import gfight.engine.graphics.api.ViewCamera;
 import gfight.engine.input.api.InputEventFactory;
@@ -115,9 +114,6 @@ public final class SwingView implements EngineView, InputEventProvider, CameraVi
             public void windowLostFocus(final WindowEvent e) {
                 listener.notifyInputEvent(inputEventFactory.pressedValue(InputEventValue.Value.RESET));
                 gamePanel.resetPressedKeys();
-                if (engine.getEngineStatus() == EngineStatus.GAME) {
-                    engine.changeStatus(EngineStatus.PAUSE);
-                }
             }
         });
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
