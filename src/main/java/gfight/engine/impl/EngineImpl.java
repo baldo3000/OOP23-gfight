@@ -256,6 +256,7 @@ public final class EngineImpl implements Engine, InputEventListener {
 
     @Override
     public void toggleFpsCounter() {
+        this.fpsCounter.setText("");
         this.isCountingFps = !this.isCountingFps;
     }
 }
