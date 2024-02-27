@@ -141,6 +141,17 @@ public class MenuPanel extends JPanel {
         fpsUnlocker.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e) {
+                if (fpsUnlocker.isSelected()) {
+                    JOptionPane.showMessageDialog(
+                            MenuPanel.this,
+                            """
+                                    Unlocking FPS is unstable and will cause the game to
+                                    behave weirdly, (graphics tearing and flickering for example).
+                                    Use this option only for benchmarking purposes.
+                                    """,
+                            "UNSTABILITY WARNING",
+                            JOptionPane.WARNING_MESSAGE);
+                }
                 engine.toggleFpsLock();
             }
         });
