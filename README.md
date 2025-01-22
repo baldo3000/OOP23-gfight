@@ -15,3 +15,10 @@ Comandi del gioco:
 
 ## Report
 In [report.md](https://github.com/frabitta/OOP23-gfight/blob/main/report.md) trovate una relazione dello sviluppo del progetto.
+
+## Screenshot
+Vengono mostrate due mappe di esempio.
+
+![gfight-1](https://github.com/user-attachments/assets/bb1aec6f-cad2-4840-8416-0e2f39f338d8)
+## 
+![gfight-2](https://github.com/user-attachments/assets/730d4df5-721c-4812-856c-13a2fc0bd206)
